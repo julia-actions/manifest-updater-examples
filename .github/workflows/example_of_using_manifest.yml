@@ -1,0 +1,67 @@
+name: Example of Using Manifest
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: 0 0 * * 1
+  workflow_dispatch:
+defaults:
+  run:
+    shell: bash
+jobs:
+  example:
+    # name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - '1.3'
+          - '1.4'
+          - '1.5'
+          - '1.6'
+          - '1' # automatically expands to the latest stable 1.x release of Julia
+          - 'nightly'
+        os:
+          - ubuntu-latest
+        arch:
+          - x64
+    steps:
+      - uses: actions/checkout@v2
+      - uses: julia-actions/setup-julia@v1
+        with:
+          version: ${{ matrix.version }}
+          arch: ${{ matrix.arch }}
+      - run: println("::set-output name=manifest_version::$(VERSION.major).$(VERSION.minor)")
+        shell: julia --color=yes --project= {0}
+        id: manifest_version
+      - run: echo "The manifest is Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml"
+      - run: rm -rf Manifest.toml
+      - run: |
+          if [ -f Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml ]; then
+            mv Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml Manifest.toml
+          fi
+      - run: chmod 400 Project.toml
+      - run: chmod 400 Manifest.toml
+      - name: Cache artifacts
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-artifacts
+        with:
+          path: ~/.julia/artifacts
+          key: ${{ runner.os }}-test-${{ env.cache-name }}-${{ hashFiles('**/Manifest.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-test-${{ env.cache-name }}-
+            ${{ runner.os }}-test-
+            ${{ runner.os }}-
+      - run: julia --color=yes -e 'import Pkg; Pkg.Registry.add("General")'
+        env:
+          JULIA_PKG_SERVER: ""
+      - run: julia --color=yes -e 'import Pkg; Pkg.Registry.update()'
+      - run: julia --color=yes --project=@. -e 'import Pkg; Pkg.instantiate()'
+      - run: julia --color=yes --project=@. -e 'import Pkg; Pkg.precompile()'
+      - run: julia --color=yes --project=@. bin/example.jl
