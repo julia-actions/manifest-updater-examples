@@ -58,6 +58,8 @@ jobs:
       - run: julia --color=yes -e 'import Pkg; Pkg.instantiate'
       - run: julia --color=yes --project=@. -e 'import Pkg; Pkg.update()'
       - run: mv Manifest.toml Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml
+      - run: chmod 600 Project.toml
+      - run: chmod 600 Manifest.*.toml
       - run: git status
       - uses: peter-evans/create-pull-request@052fc72b4198ba9fbc81b818c6e1859f747d49a8 # v3.8.2
         with:
