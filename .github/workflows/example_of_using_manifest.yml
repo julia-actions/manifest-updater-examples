@@ -36,7 +36,7 @@ jobs:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
       - run: println("::set-output name=manifest_version::$(VERSION.major).$(VERSION.minor)")
-        shell: julia --color=yes --project= {0}
+        shell: julia --color=yes {0}
         id: manifest_version
       - run: echo "The manifest is Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml"
       - run: rm -rf Manifest.toml
