@@ -55,8 +55,6 @@ jobs:
       - run: julia --color=yes -e 'import Pkg; Pkg.Registry.update()'
       - run: julia --color=yes -e 'import Pkg; Pkg.instantiate'
       - run: julia --color=yes --project=@. -e 'import Pkg; Pkg.update()'
-      - run: pwd
-      - run: ls
       - run: mv Manifest.toml Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml
       - run: git status
       - uses: actions/upload-artifact@v2
