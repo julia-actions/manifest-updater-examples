@@ -39,18 +39,9 @@ jobs:
         id: manifest_version
       - run: echo "The manifest is Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml"
       - run: rm -rf Manifest.toml
-      - run: |
-          if [ -f Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml ]; then
-            mv Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml Manifest.toml
-          fi
-      - run: |
-          if [ -f Manifest.toml ]; then
-            chmod 400 Project.toml
-          fi
-      - run: |
-          if [ -f Manifest.toml ]; then
-            chmod 400 Manifest.toml
-          fi
+      - run: mv Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml Manifest.toml
+      - run: chmod 400 Project.toml
+      - run: chmod 400 Manifest.toml
       - name: Cache artifacts
         uses: actions/cache@v2
         env:
