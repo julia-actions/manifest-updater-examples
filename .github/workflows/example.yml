@@ -1,4 +1,4 @@
-# Automatically select the manifest file based on the Julia version
+# Automatically select the correct manifest file based on the Julia version
 
 name: Example
 on:
