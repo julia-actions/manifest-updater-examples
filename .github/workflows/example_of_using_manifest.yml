@@ -44,7 +44,10 @@ jobs:
           if [ -f Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml ]; then
             mv Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml Manifest.toml
           fi
-      - run: chmod 400 Project.toml
+      - run: |
+          if [ -f Manifest.toml ]; then
+            chmod 400 Project.toml
+          fi
       - run: |
           if [ -f Manifest.toml ]; then
             chmod 400 Manifest.toml
