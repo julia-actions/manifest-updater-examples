@@ -1,3 +1,5 @@
+# Make multiple PRs (each PR updates a single manifest file)
+
 name: Multiple PRs
 on:
   pull_request:
