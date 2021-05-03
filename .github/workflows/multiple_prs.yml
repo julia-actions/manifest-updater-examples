@@ -63,7 +63,6 @@ jobs:
       - uses: peter-evans/create-pull-request@052fc72b4198ba9fbc81b818c6e1859f747d49a8 # v3.8.2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          base: main
           delete-branch: true
           branch: 'update_manifests/multiple_prs/manifest_v${{ steps.manifest_version.outputs.manifest_version }}/from_matrix_${{ matrix.version }}'
           commit-message: '🤖 Update the manifest file at `Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml`'
