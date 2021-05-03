@@ -23,7 +23,7 @@ jobs:
           - '1.4'
           - '1.5'
           - '1.6'
-          - '1' # automatically expands to the latest stable 1.x release of Julia
+          - '1'
           - 'nightly'
         os:
           - ubuntu-latest
@@ -36,7 +36,7 @@ jobs:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
       - run: println("::set-output name=manifest_version::$(VERSION.major).$(VERSION.minor)")
-        shell: julia --color=yes --project= {0}
+        shell: julia --color=yes {0}
         id: manifest_version
       - run: echo "The manifest is Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml"
       - run: rm -rf Manifest.toml
