@@ -1,6 +1,6 @@
-# Make multiple PRs (each PR updates a single manifest file)
+# Make a single PR that updates all of the manifest files
 
-name: Multiple PRs
+name: Single PR
 on:
   push:
     branches:
@@ -12,7 +12,7 @@ defaults:
   run:
     shell: bash
 jobs:
-  multiple_prs:
+  update_each_manifest:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
@@ -57,13 +57,39 @@ jobs:
       - run: julia --color=yes -e 'import Pkg; Pkg.Registry.update()'
       - run: julia --color=yes -e 'import Pkg; Pkg.instantiate'
       - run: julia --color=yes --project=@. -e 'import Pkg; Pkg.update()'
+      - run: pwd
+      - run: ls
       - run: mv Manifest.toml Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml
       - run: git status
-      - uses: peter-evans/create-pull-request@052fc72b4198ba9fbc81b818c6e1859f747d49a8 # v3.8.2
+      - uses: actions/upload-artifact@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          delete-branch: true
-          branch: 'update_manifests/multiple_prs/manifest_v${{ steps.manifest_version.outputs.manifest_version }}/from_matrix_${{ matrix.version }}'
-          commit-message: '🤖 Update the manifest file at `Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml`'
-          title: '🤖 Update the manifest file at `Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml`'
-          body: ''
+          name: manifest_file_for_${{ steps.manifest_version.outputs.manifest_version }}
+          path: Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml
+          if-no-files-found: error
+  make_single_pr:
+    needs: update_each_manifest
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v2
+      - run: rm -rf /tmp/manifest_updater
+      - run: mkdir /tmp/manifest_updater
+      - run: chmod 700 /tmp/manifest_updater
+      - uses: actions/download-artifact@v2
+        with:
+          path: /tmp/manifest_updater/download_artifacts
+      - run: mv /tmp/manifest_updater/download_artifacts/manifest_file_for_*/Manifest.*.toml .
+      - run: rm -rf /tmp/manifest_updater
+      - run: chmod 600 Project.toml
+      - run: chmod 600 Manifest.*.toml
+      - run: git status
+      # - uses: peter-evans/create-pull-request@052fc72b4198ba9fbc81b818c6e1859f747d49a8 # v3.8.2
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     delete-branch: true
+      #     branch: 'update_manifests/single_pr/all_manifests'
+      #     commit-message: '🤖 Update one or more manifest files'
+      #     title: ''
+      #     body: ''
