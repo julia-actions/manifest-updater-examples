@@ -1,5 +1,7 @@
 # manifest-updater-examples
 
+This repository has examples of GitHub Actions workflows for automatically updating `Manifest.toml` files
+
 ## Update manifest files
 
 | Workflow                                                                                                     | Description                                                |
