@@ -53,7 +53,7 @@ jobs:
         env:
           JULIA_PKG_SERVER: ""
       - run: julia --color=yes -e 'import Pkg; Pkg.Registry.update()'
-      - run: julia --color=yes -e 'import Pkg; Pkg.instantiate'
+      - run: julia --color=yes --project=@. -e 'import Pkg; Pkg.instantiate'
       - run: julia --color=yes --project=@. -e 'import Pkg; Pkg.update()'
       - run: mv Manifest.toml Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml
       - run: rm -rf Manifest.toml
