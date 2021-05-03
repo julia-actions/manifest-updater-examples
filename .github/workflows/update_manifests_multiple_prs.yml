@@ -13,7 +13,7 @@ defaults:
   run:
     shell: bash
 jobs:
-  update_manifests_multiple_prs:
+  multiple_prs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
