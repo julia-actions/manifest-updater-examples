@@ -68,5 +68,5 @@ jobs:
           delete-branch: true
           branch: 'update_manifests/manifest_v${{ steps.manifest_version.outputs.manifest_version }}/from_matrix_${{ matrix.version }}'
           commit-message: '🤖 Update the manifest file at `Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml`'
-          title: '🤖 Update the manifest at `Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml`'
+          title: '🤖 Update the manifest file at `Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml`'
           body: ''
