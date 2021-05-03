@@ -1,10 +1,16 @@
-name: Update Manifests
+name: Update Manifests (Multiple PRs)
 on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
   schedule:
     - cron: 0 0 * * 1
   workflow_dispatch:
 jobs:
-  update_manifests:
+  update_manifests_multiple_prs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     strategy:
@@ -14,33 +20,34 @@ jobs:
           - '1.3'
           - '1.4'
           - '1.5'
+          - '1.6'
           - '1'
           - 'nightly'
     steps:
-      - uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f # v2.3.4
-      - uses: julia-actions/setup-julia@0b9b1d2cd24245f151902702d8e73b3f6b910014 # v1.6.0
+      - uses: actions/checkout@v2
+      - uses: julia-actions/setup-julia@v1
         with:
           version: ${{ matrix.version }}
           arch: x64
       - run: println("::set-output name=manifest_version::$(VERSION.major).$(VERSION.minor)")
-        shell: julia --color=yes --project=.ci/ {0}
+        shell: julia --color=yes {0}
         id: manifest_version
-      - run: echo "We will update the manifest at .ci/Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml"
-      - run: rm -rf .ci/Manifest.toml
+      - run: echo "We will update the manifest at Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml"
+      - run: rm -rf Manifest.toml
       - run: |
-          if [ -f ".ci/Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml" ]; then
+          if [ -f "Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml" ]; then
               echo "Manifest exists."
-              mv .ci/Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml .ci/Manifest.toml
+              mv Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml Manifest.toml
           else
               echo "Manifest does not exist."
           fi
       - name: Cache artifacts
-        uses: actions/cache@1a9e2138d905efd099035b49d8b7a3888c653ca8 # v2.1.5
+        uses: actions/cache@v2
         env:
           cache-name: cache-artifacts
         with:
           path: ~/.julia/artifacts
-          key: ${{ runner.os }}-test-${{ env.cache-name }}-${{ hashFiles('**/.ci/Manifest.toml') }}
+          key: ${{ runner.os }}-test-${{ env.cache-name }}-${{ hashFiles('**/Manifest.toml') }}
           restore-keys: |
             ${{ runner.os }}-test-${{ env.cache-name }}-
             ${{ runner.os }}-test-
@@ -49,17 +56,15 @@ jobs:
         env:
           JULIA_PKG_SERVER: ""
       - run: julia --color=yes -e 'import Pkg; Pkg.Registry.update()'
-      - run: .ci/instantiate.sh
-      - run: julia --color=yes --project=.ci/ -e 'import Pkg; Pkg.update()'
-      - run: mv .ci/Manifest.toml .ci/Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml
+      - run: julia --color=yes -e 'import Pkg; Pkg.instantiate'
+      - run: julia --color=yes --project=@. -e 'import Pkg; Pkg.update()'
+      - run: mv .Manifest.toml Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml
       - run: git status
       - uses: peter-evans/create-pull-request@052fc72b4198ba9fbc81b818c6e1859f747d49a8 # v3.8.2
         with:
           token: ${{ secrets.TAGBOT_TOKEN }}
           delete-branch: true
           branch: 'update_manifests/manifest_v${{ steps.manifest_version.outputs.manifest_version }}/from_matrix_${{ matrix.version }}'
-          commit-message: '🤖 Update manifest: `.ci/Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml`'
-          title: '🤖 Update manifest: `.ci/Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml`'
+          commit-message: '🤖 Update manifest: `Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml`'
+          title: '🤖 Update manifest: `Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml`'
           body: ''
-          labels: |
-            CI
