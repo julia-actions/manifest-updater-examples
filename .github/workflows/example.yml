@@ -59,4 +59,5 @@ jobs:
       - run: julia --color=yes -e 'import Pkg; Pkg.Registry.update()'
       - run: julia --color=yes --project=@. -e 'import Pkg; Pkg.instantiate()'
       - run: julia --color=yes --project=@. -e 'import Pkg; Pkg.precompile()'
+      - run: julia --color=yes --project=@. -e 'println("This is a test.")'
       - run: julia --color=yes --project=@. bin/example.jl
