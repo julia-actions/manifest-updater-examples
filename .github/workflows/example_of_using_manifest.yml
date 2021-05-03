@@ -1,3 +1,5 @@
+# Automatically select the manifest file based on the Julia version
+
 name: Example
 on:
   pull_request:
