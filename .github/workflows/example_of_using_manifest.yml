@@ -46,7 +46,10 @@ jobs:
             mv Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml Manifest.toml
           fi
       - run: chmod 400 Project.toml
-      - run: chmod 400 Manifest.toml
+      - run: |
+          if [ -f Manifest.toml ]; then
+            chmod 400 Manifest.toml
+          fi
       - name: Cache artifacts
         uses: actions/cache@v2
         env:
