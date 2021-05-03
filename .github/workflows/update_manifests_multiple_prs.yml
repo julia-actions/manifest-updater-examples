@@ -6,9 +6,12 @@ on:
   push:
     branches:
       - main
-  schedule:
-    - cron: 0 0 * * 1
+  # schedule:
+  #   - cron: 0 0 * * 1
   workflow_dispatch:
+defaults:
+  run:
+    shell: bash
 jobs:
   update_manifests_multiple_prs:
     runs-on: ubuntu-latest
