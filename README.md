@@ -8,10 +8,13 @@ updating `Manifest.toml` files for use with the Julia programming language.
 | Status Badge                                          | Workflow File                                            | Description                                                       |
 | ----------------------------------------------------- | -------------------------------------------------------- | ----------------------------------------------------------------- |
 | [![Multiple PRs][multiple-prs-img]][multiple-prs-url] | [`multiple_prs.yml`](.github/workflows/multiple_prs.yml) | Make multiple PRs (each PR updates a single manifest file)        |
-|                                                       | [`single_pr.yml`](.github/workflows/single_pr.yml)       | Make a single PR that updates all of the manifest files           |
+| [![Single PR][single-pr-img]][single-pr-url]          | [`single_pr.yml`](.github/workflows/single_pr.yml)       | Make a single PR that updates all of the manifest files           |
 
 [multiple-prs-img]: https://github.com/julia-actions/manifest-updater-examples/actions/workflows/multiple_prs.yml/badge.svg "Multiple PRs"
 [multiple-prs-url]: https://github.com/julia-actions/manifest-updater-examples/actions/workflows/multiple_prs.yml
+
+[single-pr-img]: https://github.com/julia-actions/manifest-updater-examples/actions/workflows/single_pr.yml/badge.svg "Single PR"
+[single-pr-url]: https://github.com/julia-actions/manifest-updater-examples/actions/workflows/single_pr.yml
 
 ## Automatically select the manifest file based on the Julia version
 
