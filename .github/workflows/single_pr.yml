@@ -21,8 +21,8 @@ jobs:
           - '1'
           - 'nightly'
     steps:
-      - uses: actions/checkout@v2
-      - uses: julia-actions/setup-julia@v1
+      - uses: actions/checkout@v4
+      - uses: julia-actions/setup-julia@v2
         with:
           version: ${{ matrix.version }}
           arch: x64
@@ -39,7 +39,7 @@ jobs:
               echo "The manifest file does not exist, so I will create a new manifest from scratch."
           fi
       - name: Cache artifacts
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         env:
           cache-name: cache-artifacts
         with:
@@ -57,7 +57,7 @@ jobs:
       - run: julia --color=yes --project=@. -e 'import Pkg; Pkg.update()'
       - run: mv Manifest.toml Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml
       - run: git status
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: manifest_file_for_${{ steps.manifest_version.outputs.manifest_version }}
           path: Manifest.${{ steps.manifest_version.outputs.manifest_version }}.toml
@@ -69,11 +69,11 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - run: rm -rf /tmp/manifest_updater
       - run: mkdir /tmp/manifest_updater
       - run: chmod 700 /tmp/manifest_updater
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v4
         with:
           path: /tmp/manifest_updater/download_artifacts
       - run: mv /tmp/manifest_updater/download_artifacts/manifest_file_for_*/Manifest.*.toml .
@@ -82,7 +82,7 @@ jobs:
       - run: chmod 600 Project.toml
       - run: chmod 600 Manifest.*.toml
       - run: git status
-      - uses: peter-evans/create-pull-request@052fc72b4198ba9fbc81b818c6e1859f747d49a8 # v3.8.2
+      - uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           delete-branch: true
