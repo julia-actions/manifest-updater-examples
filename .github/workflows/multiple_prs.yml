@@ -24,7 +24,7 @@ jobs:
           - '1.10' # current LTS
           - '1.11'
           # - '1.12'
-          - '1'
+          # - '1.13'
           - 'nightly'
     steps:
       - uses: actions/checkout@v4
