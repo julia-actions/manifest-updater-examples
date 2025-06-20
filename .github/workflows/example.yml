@@ -32,6 +32,8 @@ jobs:
           # - '1.12'
           # - '1.13'
           - 'nightly'
+          # Some aliases:
+          - 'lts'
           - '1'
         os:
           - ubuntu-latest
